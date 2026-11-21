@@ -29,14 +29,16 @@ export const RESEARCH = [
   {name:'Machine Union',icon:'⚙️',description:'+20% machine output per rank',max:4,flavor:'Turns out machines work harder with a union.'},
   {name:'Creative Accounting',icon:'📋',description:'15% cheaper equipment per rank',max:4,flavor:'The numbers have been asked to cooperate.'}
 ];
-export function initialState(){return {version:2,sand:0,total:0,remaining:LOCATIONS.map(l=>l.supply),selected:0,owned:[],contracts:[],research:[0,0,0],ending:false};}
+export function initialState(){return {version:3,sand:0,total:0,remaining:LOCATIONS.map(l=>l.supply),selected:0,owned:[],contracts:[],research:[0,0,0],pendingLocations:[],ending:false};}
 export function migrateState(saved){
   if(!saved||!Array.isArray(saved.remaining)||saved.remaining.length!==LOCATIONS.length||!Array.isArray(saved.owned)||!Number.isFinite(saved.sand)||!Number.isFinite(saved.total)||saved.sand<0||saved.total<0||!Number.isInteger(saved.selected)||!LOCATIONS[saved.selected]||!saved.owned.every(n=>Number.isInteger(n)&&UPGRADES[n]))return initialState();
-  const state={...initialState(),...saved,ending:false,version:2};
+  const state={...initialState(),...saved,ending:false,version:3};
   if(!saved.version){const oldSupplies=[250,1500,10000,100000];if(!saved.remaining.every((n,i)=>Number.isFinite(n)&&n>=0&&n<=oldSupplies[i]))return initialState();state.remaining=LOCATIONS.map((l,i)=>l.supply-(oldSupplies[i]-saved.remaining[i]));state.contracts=[];state.research=[0,0,0];}
-  if(!state.remaining.every((n,i)=>Number.isFinite(n)&&n>=0&&n<=LOCATIONS[i].supply)||!Array.isArray(state.contracts)||!state.contracts.every((n,i,a)=>Number.isInteger(n)&&CONTRACTS[n]&&a.indexOf(n)===i)||!Array.isArray(state.research)||state.research.length!==RESEARCH.length||!state.research.every((n,i)=>Number.isInteger(n)&&n>=0&&n<=RESEARCH[i].max)||state.research.reduce((a,b)=>a+b,0)>state.contracts.length)return initialState();
+  if(saved.version!==3&&Array.isArray(state.pendingLocations)&&state.pendingLocations.length===0){const lastUnlocked=LOCATIONS.reduce((last,l,i)=>state.total>=l.unlock?i:last,0);if(lastUnlocked>state.selected&&state.remaining[lastUnlocked]>0)state.pendingLocations=[lastUnlocked];}
+  if(!state.remaining.every((n,i)=>Number.isFinite(n)&&n>=0&&n<=LOCATIONS[i].supply)||!Array.isArray(state.contracts)||!state.contracts.every((n,i,a)=>Number.isInteger(n)&&CONTRACTS[n]&&a.indexOf(n)===i)||!Array.isArray(state.research)||state.research.length!==RESEARCH.length||!state.research.every((n,i)=>Number.isInteger(n)&&n>=0&&n<=RESEARCH[i].max)||state.research.reduce((a,b)=>a+b,0)>state.contracts.length||!Array.isArray(state.pendingLocations)||!state.pendingLocations.every((n,i,a)=>Number.isInteger(n)&&n>0&&LOCATIONS[n]&&state.total>=LOCATIONS[n].unlock&&(i===0||a[i-1]<n)))return initialState();
   return state;
 }
+export function newlyUnlocked(before,after){return LOCATIONS.map((location,index)=>({location,index})).filter(({location,index})=>index>0&&before<location.unlock&&after>=location.unlock).map(({index})=>index);}
 export function unlocked(state,index){return !!LOCATIONS[index]&&state.total>=LOCATIONS[index].unlock;}
 export function clickPower(state){return (state.owned.includes(0)?3:1)+state.research[0]*15;}
 export function rate(state){return state.owned.reduce((sum,i)=>sum+(UPGRADES[i]?.rate||0),0)*(1+state.research[1]*.2);}
