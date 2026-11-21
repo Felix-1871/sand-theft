@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f4be51"><meta name="description" content="A very serious game about stealing a frankly unreasonable amount of sand.">
+  <title>Sand Theft — The dream is within reach</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Sand Theft home"><span class="brand-icon">✺</span><span>SAND<br>THEFT<span class="brand-dot">.</span></span></a>
+      <div class="header-copy"><span class="eyebrow">A COMPLETELY LEGITIMATE OPERATION</span><span class="tagline">One grain closer to greatness.</span></div>
+      <div class="top-stats" aria-label="Your sand statistics">
+        <div class="stat"><span class="stat-icon sand-icon">◆</span><span><small>SAND STASH</small><strong id="sand-count">0</strong></span></div>
+        <div class="stat"><span class="stat-icon rate-icon">↗</span><span><small>PER SECOND</small><strong id="rate-count">0</strong></span></div>
+        <div class="stat lifetime"><span class="stat-icon total-icon">✹</span><span><small>ALL-TIME HAUL</small><strong id="total-count">0</strong></span></div>
+      </div>
+      <button class="sound-toggle" id="sound-toggle" aria-label="Turn sound off" title="Toggle sound">♪</button>
+    </header>
+    <main class="dashboard">
+      <div class="intro"><div><div class="kicker"><span></span> THE GREAT SAND ACQUISITION</div><h1>BIG DREAMS.<br><em>SMALL GRAINS.</em></h1><p>They said you couldn’t build a glass house. They also said to get out of the sandbox.</p></div><div class="intro-stamp" aria-hidden="true"><span>100%</span><small>QUESTIONABLE<br>AMBITIONS</small></div></div>
+      <div class="game-grid">
+        <aside class="panel locations-panel"><div class="panel-heading"><div><span class="section-index">01 / THE WORLD</span><h2>Places to plunder</h2></div><span class="heading-icon">✳</span></div><p class="panel-sub">So much sand. So little shame.</p><div id="locations" class="locations"></div><div class="aside-note"><span>✦</span><p>Every great empire starts<br>with a little light theft.</p></div></aside>
+        <section class="center-column"><div class="scene-card"><div class="scene-head"><div><span class="scene-label"><span class="live-dot"></span> CURRENT OPERATION</span><h2 id="scene-title">The Sandbox</h2></div><span class="scene-badge" id="scene-badge">THE HUMBLE BEGINNING</span></div><div class="scene" id="scene"><div id="scene-art"></div><div class="scene-overlay"><span id="scene-caption">THE SAND IS RIGHT THERE. JUST TAKE IT.</span></div><div class="floating-gain" id="floating-gain" aria-hidden="true"></div></div><div class="scene-bottom"><div class="remaining"><span>SAND REMAINING</span><strong id="remaining">250 / 250</strong><div class="remaining-track"><div id="remaining-fill"></div></div></div><button id="gather" class="gather-button"><span class="button-shovel">♠</span><span>STEAL SAND<small id="click-power">+1 PER CLICK</small></span><span class="button-spark">✳</span></button></div></div><div class="news-ticker" aria-live="polite"><span class="news-label">FIELD REPORT</span><span id="message">A dream. A sandbox. Absolutely no permission.</span><span class="news-star">✦</span></div></section>
+        <aside class="panel upgrades-panel"><div class="panel-heading"><div><span class="section-index">02 / THE EQUIPMENT</span><h2>Tools of the trade</h2></div><span class="heading-icon">⚒</span></div><p class="panel-sub">Spend sand to make sand. Obviously.</p><div id="upgrades" class="upgrades"></div></aside>
+      </div>
+      <section class="goal-card"><div class="goal-mark">✧</div><div class="goal-copy"><span class="section-index">THE GRAND PLAN</span><h2>A house made entirely of glass.</h2><p>What could possibly go wrong?</p></div><div class="goal-progress"><div class="goal-label"><span>THE DREAM FUND</span><strong id="goal-count">0 <span>/ 60,000</span></strong></div><div class="goal-track"><div id="goal-fill"></div></div><span class="goal-hint">Sand in your stash goes toward the final build.</span></div><button id="build" class="build-button" disabled>BUILD THE HOUSE <span>✦</span></button></section>
+      <footer><span>EST. WHENEVER YOU STARTED PLAYING</span><span>MADE OF SAND &amp; QUESTIONABLE DECISIONS <b>✳</b></span></footer>
+    </main>
+  </div>
+  <div class="ending" id="ending" hidden><div class="ending-card"><span class="ending-kicker">A DREAM, REALISED ✦</span><div class="ending-art" id="ending-art"></div><div id="ending-content"></div><button id="ending-next" class="gather-button ending-next">CONTINUE <span>✦</span></button></div></div>
+  <script type="module" src="game.js"></script>
+</body></html>

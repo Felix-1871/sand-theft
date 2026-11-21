@@ -1,0 +1,7 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {GOAL,LOCATIONS,UPGRADES,initialState,unlocked,clickPower,rate,collect,select,purchase,build} from '../dist/engine.js';
+test('gathering is finite, switches require unlocks, and unlocks persist after spending',()=>{const s=initialState();assert.equal(select(s,1),false);assert.equal(collect(s,100),100);assert.equal(unlocked(s,1),true);assert.equal(purchase(s,0),true);assert.equal(clickPower(s),3);assert.equal(unlocked(s,1),true);assert.equal(collect(s,1000),150);assert.equal(s.remaining[0],0);assert.equal(collect(s,1),0);assert.equal(select(s,1),true);});
+test('upgrades require their location and cost, and apply once',()=>{const s=initialState();assert.equal(purchase(s,1),false);collect(s,100);assert.equal(purchase(s,1),true);assert.equal(rate(s),2);assert.equal(purchase(s,1),false);assert.equal(purchase(s,2),false);});
+test('all upgrades can be purchased on a complete winning run',()=>{const s=initialState();for(let i=0;i<LOCATIONS.length;i++){assert.equal(select(s,i),true);collect(s,LOCATIONS[i].supply);for(let j=0;j<UPGRADES.length;j++)if(!s.owned.includes(j))purchase(s,j);}assert.equal(s.owned.length,UPGRADES.length);assert.equal(rate(s),1262);assert.ok(s.sand>=GOAL);assert.equal(build(s),true);assert.equal(collect(s,100),0);assert.equal(build(s),false);});
+test('cannot finish before goal and collection rejects invalid amounts',()=>{const s=initialState();assert.equal(build(s),false);assert.equal(collect(s,-1),0);assert.equal(collect(s,NaN),0);assert.equal(s.sand,0);});
