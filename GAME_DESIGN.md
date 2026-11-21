@@ -22,7 +22,7 @@ The tone is cheerful, mischievous, occasionally vulgar, and increasingly absurd.
 4. Reach lifetime milestones to reveal a modal introducing the next location. Continuing moves the operation there for free.
 5. Accumulate 5,000,000 stored sand to build the glass house and see the ending.
 
-Stored sand is spendable. Lifetime sand only increases and unlocks locations and contracts; spending never reverses unlocks. Only one location is active at a time, and its finite supply caps manual and automatic collection. A location milestone pauses production and opens an announcement; continuing moves to the new location automatically. The location list is a progress display, not a set of purchase or travel buttons. Machines stop when the current location is empty. Production runs only while the game is open and visible.
+Stored sand is spendable. Lifetime sand only increases and unlocks locations and contracts; spending never reverses unlocks. Only one location is active at a time, and its finite supply caps manual and automatic collection. A location milestone pauses production and opens an announcement; continuing moves to the new location automatically. The game does not show a location list. Machines stop when the current location is empty. Production runs only while the game is open and visible.
 
 ## Locations
 
@@ -74,7 +74,7 @@ All contracts and equipment together cost at most 1,769,970 sand before discount
 
 ## Interface and tone
 
-A single screen shows the stash, per-second output, lifetime haul, location progress, current scene and gather button, equipment, contracts, permits, research, and progress toward the house. Locked items explain their requirements. Locations show remaining sand, and completed purchases and contracts remain visible. Short flavour messages accompany events.
+A single screen shows the stash, per-second output, lifetime haul, current scene and gather button, equipment, contracts, permits, research, and progress toward the house. Locked items explain their requirements. Locations show remaining sand, and completed purchases and contracts remain visible. Short flavour messages accompany events.
 
 Treat the plan with complete confidence. Examples: “The children will adapt,” “A company vehicle,” and “The moon is short on sand. Apparently.”
 
