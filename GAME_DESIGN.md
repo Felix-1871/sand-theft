@@ -19,19 +19,19 @@ The tone is cheerful, mischievous, occasionally vulgar, and increasingly absurd.
 1. Steal sand by clicking the selected location or using owned equipment.
 2. Spend sand on equipment to gather faster and on optional contracts to obtain permits.
 3. Spend permits on permanent specialities: click strength, machine output, or equipment discounts.
-4. Reach lifetime milestones to reveal a modal introducing the next location. Continuing moves the operation there for free.
+4. Empty the current location to reveal a modal introducing the next location. Continuing moves the operation there for free.
 5. Accumulate 5,000,000 stored sand to build the glass house and see the ending.
 
-Stored sand is spendable. Lifetime sand only increases and unlocks locations and contracts; spending never reverses unlocks. Only one location is active at a time, and its finite supply caps manual and automatic collection. A location milestone pauses production and opens an announcement; continuing moves to the new location automatically. The game does not show a location list. Machines stop when the current location is empty. Production runs only while the game is open and visible.
+Stored sand is spendable. Lifetime sand only increases and unlocks contracts; spending never reverses unlocks. Only one location is active at a time, and its finite supply caps manual and automatic collection. When the current location is empty, production pauses and an announcement opens; continuing moves to the next location automatically. The game does not show a location list. Machines stop when the current location is empty. Production runs only while the game is open and visible.
 
 ## Locations
 
-| Location | Supply | Lifetime unlock | Visual joke |
+| Location | Supply | Arrival | Visual joke |
 | --- | ---: | ---: | --- |
 | Playground sandbox | 250 | Start | Toys, a buried shoe, and annoyed children are revealed. |
-| Beach | 1,500 | 100 | Sunbathers remain as the beach disappears. |
-| Desert | 10,000 | 600 | Camels and a desert sign remain on bare ground. |
-| Seabed | 7,000,000 | 4,000 | Fish stare at a rectangular excavation. |
+| Beach | 1,500 | Sandbox empty | Sunbathers remain as the beach disappears. |
+| Desert | 10,000 | Beach empty | Camels and a desert sign remain on bare ground. |
+| Seabed | 7,000,000 | Desert empty | Fish stare at a rectangular excavation. |
 
 Each has full, partly empty, and empty art: full above 50% remaining, partly empty at 50% or less, and empty at zero.
 
