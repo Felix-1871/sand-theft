@@ -1,62 +1,297 @@
-export const GOAL = 5000000;
-export const LOCATIONS = [
-  { name:'The Sandbox', short:'Playground sandbox', supply:250, icon:'🪣', badge:'THE HUMBLE BEGINNING', caption:'THE SAND IS RIGHT THERE. JUST TAKE IT.', empty:'The children will adapt.' },
-  { name:'The Beach', short:'The beach', supply:1500, icon:'⛱️', badge:'A PUBLIC NUISANCE', caption:'A SANDBOX WITH EXCELLENT PUBLIC TRANSPORT LINKS.', empty:'The beach is now a concept.' },
-  { name:'The Desert', short:'The desert', supply:10000, icon:'🌵', badge:'BUSINESS IS BOOMING', caption:'FINDERS KEEPERS, SAY THE CAMELS.', empty:'It was mostly sand anyway.' },
-  { name:'The Seabed', short:'The seabed', supply:7000000, icon:'🐟', badge:'PERFECTLY NORMAL BEHAVIOUR', caption:'THE FISH HAVE BEEN INFORMED.', empty:'The ocean floor is now an ocean basement.' }
-];
-export const UPGRADES = [
-  {name:'Bucket',cost:20,loc:0,icon:'🪣',description:'3 sand per click',flavor:'Your pockets have been promoted to management.',click:3},
-  {name:'Suspicious Helper',cost:100,loc:0,icon:'🥸',description:'+2 sand per second',flavor:'Asks no questions. Answers even fewer.',rate:2},
-  {name:'Wheelbarrow',cost:300,loc:1,icon:'🛒',description:'+10 sand per second',flavor:'A company vehicle.',rate:10},
-  {name:'Excavator',cost:1000,loc:2,icon:'🚜',description:'+50 sand per second',flavor:'For delicate playground work.',rate:50},
-  {name:'Sand Barge',cost:3000,loc:2,icon:'🚢',description:'+200 sand per second',flavor:'Technically, it floats.',rate:200},
-  {name:'Extremely Large Vacuum',cost:10000,loc:3,icon:'🧹',description:'+1,000 sand per second',flavor:'DO NOT USE ON CURTAINS.',rate:1000}
-];
-export const CONTRACTS = [
-  {name:'The sandbox audit',unlock:100,cost:50,flavor:'A very important person needs a bucket. No questions.'},
-  {name:'Beachfront paperwork',unlock:600,cost:500,flavor:'The forms demand sand. Do not ask why.'},
-  {name:'A discreet delivery',unlock:4000,cost:5000,flavor:'Drop it behind the suspicious-looking dune.'},
-  {name:'The mayor’s bunker',unlock:25000,cost:50000,flavor:'Officially, this bunker does not exist.'},
-  {name:'International sand summit',unlock:200000,cost:200000,flavor:'The delegates insist on sitting directly on the merchandise.'},
-  {name:'A favour for the moon',unlock:1000000,cost:600000,flavor:'The moon is short on sand. Apparently.'},
-  {name:'The great sand shortage',unlock:2000000,cost:200000,flavor:'A crisis of our own making is still a crisis.'},
-  {name:'The suspicious hourglass',unlock:3000000,cost:300000,flavor:'Someone ordered a very, very large egg timer.'},
-  {name:'One last favour',unlock:4000000,cost:400000,flavor:'A glass housewarming gift for the inspector.'}
-];
-export const RESEARCH = [
-  {name:'Scoop School',icon:'🖐️',description:'+15 sand per click per rank',max:4,flavor:'A certified diploma in taking handfuls.'},
-  {name:'Machine Union',icon:'⚙️',description:'+20% machine output per rank',max:4,flavor:'Turns out machines work harder with a union.'},
-  {name:'Creative Accounting',icon:'📋',description:'15% cheaper equipment per rank',max:4,flavor:'The numbers have been asked to cooperate.'}
-];
-export function initialState(){return {version:4,sand:0,total:0,remaining:LOCATIONS.map(l=>l.supply),selected:0,owned:[],contracts:[],research:[0,0,0],pendingLocations:[],ending:false};}
-export function migrateState(saved){
-  if(!saved||!Array.isArray(saved.remaining)||saved.remaining.length!==LOCATIONS.length||!Array.isArray(saved.owned)||!Number.isFinite(saved.sand)||!Number.isFinite(saved.total)||saved.sand<0||saved.total<0||!Number.isInteger(saved.selected)||!LOCATIONS[saved.selected]||!saved.owned.every(n=>Number.isInteger(n)&&UPGRADES[n]))return initialState();
-  const state={...initialState(),...saved,ending:false,version:4};
-  if(!saved.version){const oldSupplies=[250,1500,10000,100000];if(!saved.remaining.every((n,i)=>Number.isFinite(n)&&n>=0&&n<=oldSupplies[i]))return initialState();state.remaining=LOCATIONS.map((l,i)=>l.supply-(oldSupplies[i]-saved.remaining[i]));state.contracts=[];state.research=[0,0,0];}
-  if(!state.remaining.every((n,i)=>Number.isFinite(n)&&n>=0&&n<=LOCATIONS[i].supply)||!Array.isArray(state.contracts)||!state.contracts.every((n,i,a)=>Number.isInteger(n)&&CONTRACTS[n]&&a.indexOf(n)===i)||!Array.isArray(state.research)||state.research.length!==RESEARCH.length||!state.research.every((n,i)=>Number.isInteger(n)&&n>=0&&n<=RESEARCH[i].max)||state.research.reduce((a,b)=>a+b,0)>state.contracts.length)return initialState();
-  // Old versions could queue a location before the current one was empty.
-  state.pendingLocations=state.remaining[state.selected]===0&&state.selected<LOCATIONS.length-1?[state.selected+1]:[];
-  return state;
+import { AREAS, EQUIPMENT, HELPERS, PROGRAMS, PLANET_UPGRADES, UNIVERSE_UPGRADES } from './campaign.js';
+
+const DESERT = 4;
+const PLANETS_PER_UNIVERSE = 18;
+
+function freshRun() {
+  return {
+    area: 0,
+    remaining: AREAS[0].supply,
+    sand: 0,
+    fraction: 0,
+    equipment: [],
+    helpers: HELPERS.map(() => 0),
+    housesBuilt: 0,
+    programs: PROGRAMS.map(() => 0),
+  };
 }
-export function unlocked(state,index){return !!LOCATIONS[index]&&index<=state.selected;}
-export function clickPower(state){return (state.owned.includes(0)?3:1)+state.research[0]*15;}
-export function rate(state){return state.owned.reduce((sum,i)=>sum+(UPGRADES[i]?.rate||0),0)*(1+state.research[1]*.2);}
-export function upgradeCost(state,index){return Math.ceil(UPGRADES[index].cost*(1-state.research[2]*.15));}
-export function permits(state){return state.contracts.length-state.research.reduce((a,b)=>a+b,0);}
-export function collect(state,amount){
-  if(state.ending||state.pendingLocations.length||!Number.isFinite(amount)||amount<=0)return 0;
-  const i=state.selected;const taken=Math.min(amount,state.remaining[i]);
-  state.remaining[i]=Math.max(0,state.remaining[i]-taken);state.sand+=taken;state.total+=taken;
-  if(taken>0&&state.remaining[i]===0&&i<LOCATIONS.length-1)state.pendingLocations=[i+1];
+
+export function initialState() {
+  return {
+    version: 1,
+    ...freshRun(),
+    planets: 0,
+    planetsEarned: 0,
+    planetsThisUniverse: 0,
+    censusPurchased: false,
+    planetUpgrades: [],
+    universes: 0,
+    universesEarned: 0,
+    universeUpgrades: [],
+  };
+}
+
+const isCount = value => Number.isSafeInteger(value) && value >= 0;
+
+function validList(values, validItem) {
+  return Array.isArray(values) && new Set(values).size === values.length && values.every(validItem);
+}
+
+export function restoreState(saved) {
+  if (
+    saved?.version !== 1 ||
+    !isCount(saved.area) || !AREAS[saved.area] ||
+    !isCount(saved.remaining) || saved.remaining > AREAS[saved.area].supply ||
+    !Number.isFinite(saved.fraction) || saved.fraction < 0 || saved.fraction >= 1 ||
+    !['sand', 'housesBuilt', 'planets', 'planetsEarned', 'planetsThisUniverse',
+      'universes', 'universesEarned'].every(key => isCount(saved[key])) ||
+    saved.planets > saved.planetsEarned || saved.planetsThisUniverse > saved.planetsEarned ||
+    saved.universes > saved.universesEarned ||
+    !validList(saved.equipment, id => isCount(id) && !!EQUIPMENT[id]) ||
+    !Array.isArray(saved.helpers) || saved.helpers.length !== HELPERS.length ||
+    !saved.helpers.every(value => isCount(value) && value <= 256) ||
+    !Array.isArray(saved.programs) || saved.programs.length !== PROGRAMS.length ||
+    !saved.programs.every((value, id) => isCount(value) && value <= PROGRAMS[id].tiers.length) ||
+    !validList(saved.planetUpgrades, id => typeof id === 'string' && Object.hasOwn(PLANET_UPGRADES, id)) ||
+    !validList(saved.universeUpgrades, id => typeof id === 'string' && Object.hasOwn(UNIVERSE_UPGRADES, id)) ||
+    typeof saved.censusPurchased !== 'boolean' ||
+    assignedHouses(saved) > totalHouses(saved)
+  ) {
+    return initialState();
+  }
+
+  return saved;
+}
+
+export const hasUniverseUpgrade = (state, id) => state.universeUpgrades.includes(id);
+
+export function hasPlanetUpgrade(state, id) {
+  return state.planetUpgrades.includes(id) ||
+    (id === 'census' && hasUniverseUpgrade(state, 'archive') && state.censusPurchased);
+}
+
+export const isComplete = state => hasUniverseUpgrade(state, 'roof');
+export const settlementOpen = state =>
+  state.area > 0 || state.remaining === 0 || state.housesBuilt > 0 || hasUniverseUpgrade(state, 'original');
+export const universeOpen = state => hasPlanetUpgrade(state, 'universe');
+
+export function areaLimit(state) {
+  return hasPlanetUpgrade(state, 'charter') ? AREAS.length : DESERT + 1;
+}
+
+export function canAdvance(state) {
+  return !isComplete(state) && state.remaining === 0 && state.area + 1 < areaLimit(state);
+}
+
+export function advance(state) {
+  if (!canAdvance(state)) return false;
+  state.area++;
+  state.remaining = AREAS[state.area].supply;
+  state.fraction = 0;
+  return true;
+}
+
+export function collect(state, amount) {
+  if (isComplete(state) || state.remaining === 0 || !Number.isFinite(amount) || amount <= 0) {
+    return 0;
+  }
+
+  const pending = amount + state.fraction;
+  const whole = Math.floor(pending);
+  const taken = Math.min(whole, state.remaining);
+  state.remaining -= taken;
+  state.sand += taken;
+  state.fraction = state.remaining === 0 ? 0 : pending - whole;
   return taken;
 }
-export function advance(state){
-  const next=state.pendingLocations[0];
-  if(state.ending||next!==state.selected+1||state.remaining[state.selected]!==0||!LOCATIONS[next])return false;
-  state.selected=next;state.pendingLocations=[];return true;
+
+export function itemAvailable(state, item) {
+  return item.area < state.area ||
+    (item.area === state.area && AREAS[state.area].supply - state.remaining >= item.at);
 }
-export function purchase(state,index){const u=UPGRADES[index];if(!u||state.ending||state.owned.includes(index)||!unlocked(state,u.loc)||state.sand<upgradeCost(state,index))return false;state.sand-=upgradeCost(state,index);state.owned.push(index);return true;}
-export function completeContract(state,index){const c=CONTRACTS[index];if(!c||state.ending||state.contracts.includes(index)||state.total<c.unlock||state.sand<c.cost)return false;state.sand-=c.cost;state.contracts.push(index);return true;}
-export function research(state,index){const r=RESEARCH[index];if(!r||state.ending||permits(state)<1||state.research[index]>=r.max)return false;state.research[index]++;return true;}
-export function build(state){if(state.ending||state.sand<GOAL)return false;state.ending=true;return true;}
+
+function activePrograms(state, path) {
+  return PROGRAMS[path].tiers.slice(0, state.programs[path]);
+}
+
+function programBonus(state, path, property) {
+  return activePrograms(state, path).reduce((sum, tier) => sum + (tier[property] ?? 0), 0);
+}
+
+export function extractionMultiplier(state) {
+  return (1 + 3 * state.planetsEarned) * (hasPlanetUpgrade(state, 'gravity') ? 1.25 : 1);
+}
+
+export function production(state) {
+  let manual = 1 + programBonus(state, 0, 'manual');
+  let crewPercent = 0;
+  const helperBase = HELPERS.map(helper => helper.output);
+  for (const id of state.equipment) {
+    const upgrade = EQUIPMENT[id];
+    if (upgrade.effect === 'manual') manual += upgrade.value;
+    if (upgrade.effect === 'crew') crewPercent += upgrade.value;
+    if (upgrade.effect === 'helper') helperBase[upgrade.helper] += upgrade.value;
+  }
+
+  const boost = extractionMultiplier(state);
+  const helperMultiplier = (1 + crewPercent / 100) *
+    (1 + programBonus(state, 1, 'helperPercent') / 100) * boost;
+  const helperRate = helperBase.map(base => base * helperMultiplier);
+
+  return {
+    click: manual * (1 + programBonus(state, 0, 'manualPercent') / 100) * boost,
+    helpers: helperRate,
+    perSecond: state.helpers.reduce((sum, count, id) => sum + count * helperRate[id], 0),
+  };
+}
+
+export function buyEquipment(state, id) {
+  const upgrade = EQUIPMENT[id];
+  if (
+    !upgrade || isComplete(state) || state.equipment.includes(id) ||
+    !itemAvailable(state, upgrade) || state.sand < upgrade.cost
+  ) return false;
+
+  state.sand -= upgrade.cost;
+  state.equipment.push(id);
+  return true;
+}
+
+function roundedPrice(numerator, denominator) {
+  const cost = (numerator + denominator - 1n) / denominator;
+  return cost > BigInt(Number.MAX_SAFE_INTEGER) ? Infinity : Number(cost);
+}
+
+export function helperPrice(state, id) {
+  const count = BigInt(state.helpers[id]);
+  const discount = programBonus(state, 1, 'hireDiscount');
+  return roundedPrice(BigInt(HELPERS[id].cost) * 135n ** count * BigInt(100 - discount), 100n ** (count + 1n));
+}
+
+export function hireHelper(state, id) {
+  const helper = HELPERS[id];
+  if (!helper || isComplete(state) || !itemAvailable(state, helper)) return false;
+  const cost = helperPrice(state, id);
+  if (state.sand < cost) return false;
+
+  state.sand -= cost;
+  state.helpers[id]++;
+  return true;
+}
+
+export const totalHouses = state => settlementOpen(state) ? 1 + state.housesBuilt : 0;
+
+export function assignedHouses(state) {
+  return PROGRAMS.reduce((sum, _, path) =>
+    sum + activePrograms(state, path).reduce((total, tier) => total + tier.homes, 0), 0);
+}
+
+export const availableHouses = state => totalHouses(state) - assignedHouses(state);
+
+export function housePrice(state) {
+  const base = 1000n + 250n * BigInt(state.housesBuilt);
+  const discount = programBonus(state, 2, 'houseDiscount');
+  const subsidy = hasPlanetUpgrade(state, 'subsidy') ? 80n : 100n;
+  return roundedPrice(base * BigInt(100 - discount) * subsidy, 10000n);
+}
+
+export function buildHouse(state) {
+  if (!settlementOpen(state) || isComplete(state)) return false;
+  const cost = housePrice(state);
+  if (state.sand < cost) return false;
+
+  state.sand -= cost;
+  state.housesBuilt++;
+  return true;
+}
+
+export function assignFamilies(state, path, tier) {
+  const program = PROGRAMS[path]?.tiers[tier];
+  if (
+    !program || !settlementOpen(state) || isComplete(state) ||
+    state.programs[path] !== tier || availableHouses(state) < program.homes
+  ) return false;
+
+  state.programs[path]++;
+  return true;
+}
+
+export function payoutForArea(state, area) {
+  const base = AREAS[area]?.planetReward ?? 0;
+  if (base === 0 || !hasPlanetUpgrade(state, 'census')) return base;
+  return base * 2 + (hasUniverseUpgrade(state, 'office') ? 2 : 0);
+}
+
+export function planetReward(state) {
+  const cleared = state.remaining > 0 ? state.area - 1 : state.area;
+  return payoutForArea(state, cleared);
+}
+
+export const planetOpen = state => state.planetsEarned > 0 || planetReward(state) > 0;
+
+function resetRun(state) {
+  const next = freshRun();
+  if (hasUniverseUpgrade(state, 'portable')) {
+    next.housesBuilt = state.housesBuilt;
+    next.programs = state.programs;
+  }
+  Object.assign(state, next);
+}
+
+export function makePlanet(state) {
+  const reward = planetReward(state);
+  if (reward === 0 || isComplete(state)) return 0;
+
+  state.planets += reward;
+  state.planetsEarned += reward;
+  state.planetsThisUniverse += reward;
+  resetRun(state);
+  return reward;
+}
+
+export function canMakeUniverse(state) {
+  return !isComplete(state) && universeOpen(state) &&
+    (state.universesEarned === 0 || state.planetsThisUniverse >= PLANETS_PER_UNIVERSE);
+}
+
+export function makeUniverse(state) {
+  if (!canMakeUniverse(state)) return false;
+
+  state.universes++;
+  state.universesEarned++;
+  state.planets = 0;
+  state.planetsThisUniverse = 0;
+  state.planetUpgrades = state.planetUpgrades.filter(id => id === 'charter' || id === 'universe');
+  resetRun(state);
+  return true;
+}
+
+export function canBuyPrestige(state, layer, id) {
+  if (isComplete(state) || (layer !== 'planet' && layer !== 'universe')) return false;
+  const planet = layer === 'planet';
+  if (!(planet ? planetOpen(state) : universeOpen(state))) return false;
+
+  const tree = planet ? PLANET_UPGRADES : UNIVERSE_UPGRADES;
+  if (!Object.hasOwn(tree, id)) return false;
+  const owned = planet ? hasPlanetUpgrade : hasUniverseUpgrade;
+  const { cost, requires = [] } = tree[id];
+  const balance = planet ? state.planets : state.universes;
+  return !owned(state, id) && balance >= cost && requires.every(other => owned(state, other));
+}
+
+export function buyPrestige(state, layer, id) {
+  if (!canBuyPrestige(state, layer, id)) return false;
+
+  if (layer === 'planet') {
+    state.planets -= PLANET_UPGRADES[id].cost;
+    state.planetUpgrades.push(id);
+    if (id === 'census') state.censusPurchased = true;
+  } else {
+    state.universes -= UNIVERSE_UPGRADES[id].cost;
+    state.universeUpgrades.push(id);
+  }
+
+  return true;
+}
+
+export { PLANETS_PER_UNIVERSE };
