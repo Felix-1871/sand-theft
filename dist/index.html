@@ -1,41 +1,205 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#f4be51"><meta name="description" content="A very serious game about stealing a frankly unreasonable amount of sand.">
-  <title>Sand Theft — The dream is within reach</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6efd9">
+  <meta name="description" content="Cezary Baryka's glass housing program starts with a shovel and a public playground.">
+  <title>Sand Theft · The Glass Housing Program</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="app" id="app">
-    <header class="topbar">
-      <a class="brand" href="#" aria-label="Sand Theft home"><span class="brand-icon">✺</span><span>SAND<br>THEFT<span class="brand-dot">.</span></span></a>
-      <div class="header-copy"><span class="eyebrow">A COMPLETELY LEGITIMATE OPERATION</span><span class="tagline">One grain closer to greatness.</span></div>
-      <div class="top-stats" aria-label="Your sand statistics">
-        <div class="stat"><span class="stat-icon sand-icon">◆</span><span><small>SAND STASH</small><strong id="sand-count">0</strong></span></div>
-        <div class="stat"><span class="stat-icon rate-icon">↗</span><span><small>PER SECOND</small><strong id="rate-count">0</strong></span></div>
-        <div class="stat lifetime"><span class="stat-icon total-icon">✹</span><span><small>ALL-TIME HAUL</small><strong id="total-count">0</strong></span></div>
-      </div>
-      <button class="sound-toggle" id="sound-toggle" aria-label="Turn sound off" title="Toggle sound">♪</button>
-    </header>
-    <main class="dashboard">
-      <div class="intro"><div><div class="kicker"><span></span> THE GREAT SAND ACQUISITION</div><h1>BIG DREAMS.<br><em>SMALL GRAINS.</em></h1><p>They said you couldn’t build a glass house. They also said to get out of the sandbox.</p></div><div class="intro-stamp" aria-hidden="true"><span>100%</span><small>QUESTIONABLE<br>AMBITIONS</small></div></div>
-      <div class="game-grid">
+  <header class="shell topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">✦</span>
+      <div><strong data-i18n>Sand Theft</strong><small data-i18n>The Glass Housing Program</small></div>
+    </div>
+    <div class="top-stats" aria-label="Sand statistics" data-i18n-aria>
+      <div><span data-i18n>Sand stash</span><strong id="sand">0</strong></div>
+      <div><span data-i18n>Helper output / sec</span><strong id="rate">0</strong></div>
+    </div>
+    <select class="language" id="language" aria-label="Language" data-i18n-aria>
+      <option lang="en" value="en">English</option>
+      <option lang="pl" value="pl">Polski</option>
+    </select>
+    <button class="sound" id="sound-toggle" type="button" aria-label="Sound" data-i18n-aria aria-pressed="true" title="Sound" data-i18n-title>♪</button>
+  </header>
 
-        <section class="center-column"><div class="scene-card"><div class="scene-head"><div><span class="scene-label"><span class="live-dot"></span> CURRENT OPERATION</span><h2 id="scene-title">The Sandbox</h2></div><span class="scene-badge" id="scene-badge">THE HUMBLE BEGINNING</span></div><div class="scene" id="scene"><div id="scene-art"></div><div class="scene-overlay"><span id="scene-caption">THE SAND IS RIGHT THERE. JUST TAKE IT.</span></div><div class="floating-gain" id="floating-gain" aria-hidden="true"></div></div><div class="scene-bottom"><div class="remaining"><span>SAND REMAINING</span><strong id="remaining">250 / 250</strong><div class="remaining-track"><div id="remaining-fill"></div></div></div><button id="gather" class="gather-button"><span class="button-shovel">♠</span><span>STEAL SAND<small id="click-power">+1 PER CLICK</small></span><span class="button-spark">✳</span></button></div></div><div class="news-ticker" aria-live="polite"><span class="news-label">FIELD REPORT</span><span id="message">A dream. A sandbox. Absolutely no permission.</span><span class="news-star">✦</span></div></section>
-        <aside class="panel upgrades-panel"><div class="panel-heading"><div><span class="section-index">02 / THE EQUIPMENT</span><h2>Tools of the trade</h2></div><span class="heading-icon">⚒</span></div><p class="panel-sub">Spend sand to make sand. Obviously.</p><div id="upgrades" class="upgrades"></div></aside>
+  <main class="shell">
+    <details class="card debug-menu" id="debug-menu" hidden>
+      <summary data-i18n>Debug menu</summary>
+      <p data-i18n>This test run uses a separate save. Your regular campaign is unaffected.</p>
+      <div class="debug-actions">
+        <form id="debug-jump">
+          <div>
+            <label for="debug-area" data-i18n>Area</label>
+            <select id="debug-area"></select>
+          </div>
+          <button class="secondary" type="submit" data-i18n>Jump to area</button>
+        </form>
+        <button class="secondary" id="debug-empty" type="button" data-i18n>Empty current area</button>
       </div>
-      <section class="strategy-grid" aria-label="Contracts and research">
-        <div class="panel contracts-panel"><div class="panel-heading"><div><span class="section-index">03 / THE SIDE HUSTLE</span><h2>Shady contracts</h2></div><span class="heading-icon">✉</span></div><p class="panel-sub">Trade sand for permits. Bureaucracy has never been so profitable.</p><div id="contracts" class="contracts"></div></div>
-        <div class="panel research-panel"><div class="panel-heading"><div><span class="section-index">04 / THE MASTER PLAN</span><h2>Spend your permits</h2></div><span class="permit-count" id="permits">0 PERMITS</span></div><p class="panel-sub">Pick your specialities. There aren't enough permits for everything.</p><div id="research" class="research"></div></div>
+      <form class="debug-actions" id="debug-grant" novalidate>
+        <div>
+          <label for="debug-resource" data-i18n>Resource</label>
+          <select id="debug-resource">
+            <option value="sand" data-i18n>Sand</option>
+            <option value="houses" data-i18n>Available houses</option>
+            <option value="planets" data-i18n>Glass Planets</option>
+            <option value="universes" data-i18n>Glass Universes</option>
+          </select>
+        </div>
+        <div>
+          <label for="debug-amount" data-i18n>Amount</label>
+          <input id="debug-amount" type="number" inputmode="numeric" min="1" step="1" value="1000" required>
+        </div>
+        <button class="secondary" type="submit" data-i18n>Grant resource</button>
+      </form>
+      <button class="secondary" id="debug-restart" type="button" data-i18n>Restart test run</button>
+      <p id="debug-status" role="status"></p>
+    </details>
+    <div id="campaign">
+      <nav class="tabs" id="tabs" role="tablist" aria-label="Housing program" data-i18n-aria>
+        <button type="button" role="tab" id="tab-extraction" aria-controls="panel-extraction" aria-selected="true" data-i18n>Extraction</button>
+        <button type="button" role="tab" id="tab-settlement" aria-controls="panel-settlement" aria-selected="false" tabindex="-1" hidden data-i18n>Glass Settlement</button>
+        <button type="button" role="tab" id="tab-planet" aria-controls="panel-planet" aria-selected="false" tabindex="-1" hidden data-i18n>Glass Planet</button>
+        <button type="button" role="tab" id="tab-universe" aria-controls="panel-universe" aria-selected="false" tabindex="-1" hidden data-i18n>Glass Universe</button>
+      </nav>
+
+      <section id="panel-extraction" role="tabpanel" aria-labelledby="tab-extraction">
+        <div class="intro">
+          <h1 data-i18n>Cezary’s glass housing program</h1>
+          <p data-i18n>You’re Cezary Baryka. One glass house was a start, and the neighbourhood has plenty of sand.</p>
+        </div>
+        <div class="extraction-layout">
+          <div class="field">
+            <section class="card scene-card" aria-labelledby="area-name">
+              <div class="scene-heading">
+                <h2 id="area-name">Playground</h2>
+                <span id="area-count" class="area-count">Area 1 of 5</span>
+              </div>
+              <div class="scene-art" id="scene-art" aria-hidden="true"></div>
+              <p id="caption" class="caption"></p>
+              <div class="field-body">
+                <div class="meter-label"><label for="remaining-bar" data-i18n>Sand remaining</label><strong id="remaining"></strong></div>
+                <progress id="remaining-bar" max="100000" value="100000"></progress>
+                <button id="gather" class="primary gather" type="button"><span data-i18n>Extract sand</span><small id="click-output">+1 per click</small></button>
+                <button id="advance" class="primary gather" type="button" hidden>Continue</button>
+                <button id="go-planet" class="primary gather" type="button" hidden data-i18n>Open Glass Planet</button>
+              </div>
+            </section>
+            <p class="field-note" id="field-note">Cezary’s crew is ready to start.</p>
+          </div>
+          <section class="card shop" aria-labelledby="shop-title">
+            <div class="shop-heading">
+              <h2 id="shop-title" data-i18n>Sand exchange</h2>
+              <div class="switch" role="group" aria-label="Sand exchange category" data-i18n-aria>
+                <button type="button" id="show-equipment" aria-pressed="true" data-i18n>Equipment</button>
+                <button type="button" id="show-helpers" aria-pressed="false" data-i18n>Helpers</button>
+              </div>
+            </div>
+            <div id="equipment-list" class="shop-list"></div>
+            <div id="helpers-list" class="shop-list" hidden></div>
+            <p id="shop-hint" class="shop-hint"></p>
+          </section>
+        </div>
       </section>
-      <section class="goal-card"><div class="goal-mark">✧</div><div class="goal-copy"><span class="section-index">THE GRAND PLAN</span><h2>A house made entirely of glass.</h2><p>What could possibly go wrong?</p></div><div class="goal-progress"><div class="goal-label"><span>THE DREAM FUND</span><strong id="goal-count">0 <span>/ 5,000,000</span></strong></div><div class="goal-track"><div id="goal-fill"></div></div><span class="goal-hint">Sand in your stash goes toward the final build.</span></div><button id="build" class="build-button" disabled>BUILD THE HOUSE <span>✦</span></button></section>
-      <footer><span>EST. WHENEVER YOU STARTED PLAYING</span><span>MADE OF SAND &amp; QUESTIONABLE DECISIONS <b>✳</b></span></footer>
-    </main>
-  </div>
-  <dialog id="location-dialog" class="location-dialog" aria-labelledby="location-dialog-title" aria-describedby="location-dialog-description">
-    <div class="location-modal-card"><span class="location-modal-kicker">✦ NEW SAND DISCOVERED ✦</span><div id="location-dialog-art" class="location-modal-art"></div><h2 id="location-dialog-title"></h2><p id="location-dialog-description"></p><button id="location-continue" class="gather-button location-continue">LET'S GO <span>✦</span></button><small>NO PERMIT REQUIRED. PROBABLY.</small></div>
+
+      <section id="panel-settlement" role="tabpanel" aria-labelledby="tab-settlement" hidden>
+        <div class="intro"><h1 data-i18n>Glass Settlement</h1><p data-i18n>Build homes and invite families whose work helps the program grow.</p></div>
+        <div class="wide-layout">
+          <section class="card overview">
+            <div id="settlement-art" class="scene-art settlement-art" aria-hidden="true"></div>
+            <div class="overview-body">
+              <h2 data-i18n>Housing register</h2>
+              <dl class="figures">
+                <div><dt data-i18n>Total homes</dt><dd id="total-homes"></dd></div>
+                <div><dt data-i18n>Available</dt><dd id="available-homes"></dd></div>
+                <div><dt data-i18n>Assigned</dt><dd id="assigned-homes"></dd></div>
+              </dl>
+              <button id="build-house" type="button" class="primary"><span data-i18n>Build a glass house</span><small id="house-cost"></small></button>
+            </div>
+          </section>
+          <section aria-label="Family programs" data-i18n-aria>
+            <p class="section-note" data-i18n>Assignments are permanent. Each path unlocks in order, and you can mix paths.</p>
+            <div id="programs" class="program-grid"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="panel-planet" role="tabpanel" aria-labelledby="tab-planet" hidden>
+        <div class="intro"><h1 data-i18n>Glass Planet</h1><p data-i18n>A municipality can only grow so far before it needs an orbit.</p></div>
+        <div class="wide-layout">
+          <section class="card overview">
+            <div class="scene-art scene-orbit" aria-hidden="true"></div>
+            <div class="overview-body">
+              <h2 data-i18n>Planetary census</h2>
+              <dl class="figures">
+                <div><dt data-i18n>Available</dt><dd id="planet-balance"></dd></div>
+                <div><dt data-i18n>Total earned</dt><dd id="lifetime-planets"></dd></div>
+                <div><dt data-i18n>Extraction</dt><dd id="planet-boost"></dd></div>
+              </dl>
+              <p class="section-note" data-i18n>Each planet earned adds +300% extraction. Spent planets count.</p>
+              <button id="planet-reset" type="button" class="primary" data-i18n>Make a Glass Planet</button>
+              <p id="planet-hint" class="reset-hint"></p>
+              <dl class="payouts" id="payouts"></dl>
+            </div>
+          </section>
+          <section class="card tree" aria-labelledby="planet-tree-title">
+            <h2 id="planet-tree-title" data-i18n>Planet upgrades</h2>
+            <div id="planet-tree" class="offers"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="panel-universe" role="tabpanel" aria-labelledby="tab-universe" hidden>
+        <div class="intro"><h1 data-i18n>Glass Universe</h1><p data-i18n>The last housing authority you’ll ever need.</p></div>
+        <div class="wide-layout">
+          <section class="card overview">
+            <div class="scene-art scene-universe" aria-hidden="true"></div>
+            <div class="overview-body">
+              <h2 data-i18n>Universal register</h2>
+              <dl class="figures">
+                <div><dt data-i18n>Available</dt><dd id="universe-balance"></dd></div>
+                <div><dt data-i18n>Total earned</dt><dd id="lifetime-universes"></dd></div>
+              </dl>
+              <div id="universe-meter">
+                <div class="meter-label"><label for="universe-bar" data-i18n>Fresh planets</label><strong id="universe-progress"></strong></div>
+                <progress id="universe-bar" max="18" value="0"></progress>
+              </div>
+              <button id="universe-reset" class="primary" type="button" data-i18n>Make a Glass Universe</button>
+              <p id="universe-hint" class="reset-hint"></p>
+            </div>
+          </section>
+          <section class="card tree" aria-labelledby="universe-tree-title">
+            <h2 id="universe-tree-title" data-i18n>Universe upgrades</h2>
+            <div id="universe-tree" class="offers"></div>
+          </section>
+        </div>
+      </section>
+    </div>
+
+    <section id="ending" class="card ending" hidden aria-labelledby="ending-title">
+      <div class="scene-art scene-universe" aria-hidden="true"></div>
+      <div class="ending-body">
+        <h1 id="ending-title" tabindex="-1" data-i18n>A glass roof over everything</h1>
+        <p data-i18n>Every address now has a window. The housing office is reviewing the question of walls.</p>
+        <p class="completion" data-i18n>Glass housing program complete</p>
+      </div>
+    </section>
+  </main>
+
+  <span class="sr-only" id="status" role="status"></span>
+  <dialog id="confirm-dialog" class="card" aria-labelledby="confirm-title" aria-describedby="confirm-copy">
+    <form method="dialog">
+      <h2 id="confirm-title"></h2>
+      <p id="confirm-copy"></p>
+      <div class="dialog-actions">
+        <button type="submit" value="cancel" class="secondary" autofocus data-i18n>Cancel</button>
+        <button type="submit" value="accept" class="primary" id="confirm-action"></button>
+      </div>
+    </form>
   </dialog>
-  <div class="ending" id="ending" hidden><div class="ending-card"><span class="ending-kicker">A DREAM, REALISED ✦</span><div class="ending-art" id="ending-art"></div><div id="ending-content"></div><button id="ending-next" class="gather-button ending-next">CONTINUE <span>✦</span></button></div></div>
   <script type="module" src="game.js"></script>
-</body></html>
+</body>
+</html>

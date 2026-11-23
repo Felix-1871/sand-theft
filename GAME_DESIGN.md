@@ -1,93 +1,40 @@
-# Sand Theft Game Design Document
+# Sand Theft · The Glass Housing Program
 
-Sand Theft is a comedic single-player incremental game about stealing increasingly unreasonable quantities of sand to fulfil the promise of a glass house. The player starts at a playground, expands their operation, takes questionable contracts, and builds the gloriously impractical house only at the end.
+Cezary Baryka already owns a glass house. He sets out to build a whole settlement, and the nearest playground has enough sand to get him started.
 
-**Platform:** Browser on PC or touch devices
+## Extraction
 
-**Target duration:** About one hour, depending on play style; balance requires human playtesting
+The playground starts with 100,000 grains, and Cezary collects one grain per click. Every area has a finite supply. Emptying it opens the next, and the player chooses when to move on. Sand, equipment, helpers, and the settlement carry over from one area to the next.
 
-**Structure:** One run and one ending; progress saves locally, with no offline production
+Sand buys one-time equipment and repeatable helpers. Shop items appear as sand is extracted from their area and remain available later in that run. The next hire of the same type costs 35% more before discounts, rounded up. Helpers work while the page is visible.
 
-## Creative direction
+| Area | Sand supply | Base planet payout |
+| --- | ---: | ---: |
+| Playground | 100,000 | — |
+| Municipal Beach | 14,000,000 | — |
+| Strategic Sand Quarry | 245,000,000 | — |
+| Baltic Seabed | 2,500,000,000 | — |
+| Desert of National Importance | 23,000,000,000 | 1 |
+| Lunar Regolith Depot | 400,000,000,000 | 2 |
+| Martian Dust Customs Zone | 6,000,000,000,000 | 4 |
+| Saturn Ring Reserve | 85,000,000,000,000 | 8 |
 
-The game treats the glass-home promise associated with Stefan Żeromski's *Przedwiośnie* as the extremely serious goal of an extremely silly operation. Its ending also draws on the crude, skittish, absurd humor of *Kapitan Bomba*. Use original characters and writing.
+## Glass Settlement
 
-The tone is cheerful, mischievous, occasionally vulgar, and increasingly absurd. The player becomes an unlikely sand industrialist. The world reacts with mild confusion and visual jokes.
+Emptying the playground opens the settlement with Cezary's original house available to assign. New houses start at 1,000 grains, with an additional 250 grains on the base price for each one built. Assigning homes moves in families permanently. The homes still count toward the total.
 
-## Core loop
+The three paths improve manual digging, helpers, or construction. Each path has four programs, costing 1, 2, 4, and 8 homes, with each program requiring the previous one in that path. Players can mix paths. Percentages of the same kind within a path add together. Flat equipment and family bonuses apply before the corresponding multipliers.
 
-1. Steal sand by clicking the selected location or using owned equipment.
-2. Spend sand on equipment to gather faster and on optional contracts to obtain permits.
-3. Spend permits on permanent specialities: click strength, machine output, or equipment discounts.
-4. Empty the current location to reveal a modal introducing the next location. Continuing moves the operation there for free.
-5. Accumulate 5,000,000 stored sand to build the glass house and see the ending.
+## Glass Planet
 
-Stored sand is spendable. Lifetime sand only increases and unlocks contracts; spending never reverses unlocks. Only one location is active at a time, and its finite supply caps manual and automatic collection. When the current location is empty, production pauses and an announcement opens; continuing moves to the next location automatically. The game does not show a location list. Machines stop when the current location is empty. Production runs only while the game is open and visible.
+Emptying the desert enables an optional reset for planets. Payout depends on the deepest area fully cleared in the current run. A Planet reset takes Cezary back to the playground with all areas restocked. It clears the run's sand, shop purchases, and settlement, unless Portable Settlement is owned.
 
-## Locations
+Each planet ever earned adds 300% of base extraction, even after spending it. The Off-World Zoning Charter costs 1 planet and permanently opens the three bonus areas in sequence. The Census doubles future payouts, and the Permit for an Entire Universe costs 18 planets.
 
-| Location | Supply | Arrival | Visual joke |
-| --- | ---: | ---: | --- |
-| Playground sandbox | 250 | Start | Toys, a buried shoe, and annoyed children are revealed. |
-| Beach | 1,500 | Sandbox empty | Sunbathers remain as the beach disappears. |
-| Desert | 10,000 | Beach empty | Camels and a desert sign remain on bare ground. |
-| Seabed | 7,000,000 | Desert empty | Fish stare at a rectangular excavation. |
+## Glass Universe
 
-Each has full, partly empty, and empty art: full above 50% remaining, partly empty at 50% or less, and empty at zero.
+The permit makes the first Universe reset available immediately. Subsequent resets require earning 18 fresh planets, including any spent, and award one Universe each. Universe resets clear the spendable planet balance and ordinary Planet upgrades. Lifetime planet extraction, the Charter, access to Glass Universe, and Universe upgrades carry over.
 
-## Equipment
+The Universe tree opens the settlement immediately, preserves the Census and settlement through resets, and adds two planets to doubled payouts. The final purchase, **Put a Glass Roof on Everything**, completes the game. Buying the full tree takes six Universes.
 
-Equipment is purchased once and carries across locations. Automatic rates add together before research bonuses.
-
-| Equipment | Base cost | Effect | Available |
-| --- | ---: | --- | --- |
-| Bucket | 20 | Sets base manual collection to 3 per click. | Start |
-| Suspicious Helper | 100 | +2 sand per second | Start |
-| Wheelbarrow | 300 | +10 sand per second | Beach unlocked |
-| Excavator | 1,000 | +50 sand per second | Desert unlocked |
-| Sand Barge | 3,000 | +200 sand per second | Desert unlocked |
-| Extremely Large Vacuum | 10,000 | +1,000 sand per second | Seabed unlocked |
-
-## Contracts and research
-
-Contracts are optional one-time sand deliveries. Each has a lifetime unlock, costs stored sand, and grants one permit. Players get at most nine permits and can spend each once on a research rank. There are twelve possible ranks, so they must choose their emphasis.
-
-| Contract | Lifetime unlock | Sand cost | Reward |
-| --- | ---: | ---: | --- |
-| The sandbox audit | 100 | 50 | 1 permit |
-| Beachfront paperwork | 600 | 500 | 1 permit |
-| A discreet delivery | 4,000 | 5,000 | 1 permit |
-| The mayor's bunker | 25,000 | 50,000 | 1 permit |
-| International sand summit | 200,000 | 200,000 | 1 permit |
-| A favour for the moon | 1,000,000 | 600,000 | 1 permit |
-| The great sand shortage | 2,000,000 | 200,000 | 1 permit |
-| The suspicious hourglass | 3,000,000 | 300,000 | 1 permit |
-| One last favour | 4,000,000 | 400,000 | 1 permit |
-
-| Research | Effect per rank | Maximum |
-| --- | --- | ---: |
-| Scoop School | +15 sand per click | 4 ranks |
-| Machine Union | +20% of base machine output | 4 ranks |
-| Creative Accounting | Equipment costs 15% less of base cost; round up | 4 ranks |
-
-All contracts and equipment together cost at most 1,769,970 sand before discounts. The locations contain 7,011,750 sand, leaving enough to reach the 5,000,000-sand goal even after every purchase. The numbers are initial balance values, not a guarantee of real-world completion time. A simple simulated strategy with frequent early clicks, occasional later clicks, prompt purchases, and automation-first research finishes in roughly 54 minutes; human testing should adjust pacing.
-
-## Interface and tone
-
-A single screen shows the stash, per-second output, lifetime haul, current scene and gather button, equipment, contracts, permits, research, and progress toward the house. Locked items explain their requirements. Locations show remaining sand, and completed purchases and contracts remain visible. Short flavour messages accompany events.
-
-Treat the plan with complete confidence. Examples: “The children will adapt,” “A company vehicle,” and “The moon is short on sand. Apparently.”
-
-## Ending
-
-At 5,000,000 stored sand the player can build the house. A brief construction reveal shows a magnificent transparent house. The toilet is visible from the street, curtains fail, the interior becomes unbearably hot, and cracks appear. The ending closes with **THE DREAM HAS BEEN REALISED**, another crack, and a restart button.
-
-A sequence of illustrated frames and text is sufficient; the ending is not a playable building sequence.
-
-## Art, audio, and scope
-
-Use bright 2D cartoon art, exaggerated expressions, oversized machinery, simple sound effects, and a dramatic house reveal. Keep the loop responsive to mouse and touch.
-
-A finished build allows collection, automatic location transitions, buying upgrades, fulfilling contracts, spending permits, saving and resuming progress, reaching the ending, and restarting. Verify finite supplies, affordability, unlocks, discount calculations, the full winning path, old-save migration, and pacing.
-
-Out of scope: multiplayer, procedural locations, offline progress, individual worker simulation, and building a settlement during the run.
+The full catalog of equipment, helpers, family programs, and prestige upgrades lives in [dist/campaign.js](dist/campaign.js). Progress, including completion, saves locally. The former campaign keeps its separate save, and the game does not award offline production.
